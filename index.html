@@ -668,27 +668,152 @@
             }
         }
 
-        // Load saved language preference
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedLang = localStorage.getItem('language') || 'zh';
-            document.body.className = 'lang-' + savedLang;
+        // Search functionality
+        function initSearch() {
+            const searchBox = document.createElement('div');
+            searchBox.innerHTML = `
+                <div style="margin-bottom: 2rem; background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <input type="text" id="searchInput" placeholder="搜索笔记... / Search notes..." 
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 1rem;">
+                </div>
+            `;
+            const content = document.querySelector('.content');
+            content.insertBefore(searchBox, content.firstChild);
             
-            // Book selector functionality
-            const bookItems = document.querySelectorAll('.book-item');
-            bookItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    bookItems.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                const notes = document.querySelectorAll('.note-entry, .study-card');
+                
+                notes.forEach(note => {
+                    const text = note.textContent.toLowerCase();
+                    note.style.display = text.includes(query) ? 'block' : 'none';
                 });
             });
+        }
+
+        // Content data for different books
+        const booksContent = {
+            'group-theory': {
+                title: {zh: '群论学习笔记', en: 'Group Theory Study Notes'},
+                chapters: [
+                    {id: 'ch1', title: {zh: '第1章：群的定义', en: 'Ch.1: Group Definition'}},
+                    {id: 'ch2', title: {zh: '第2章：子群与陪集', en: 'Ch.2: Subgroups & Cosets'}},
+                    {id: 'ch3', title: {zh: '第3章：群同态', en: 'Ch.3: Group Homomorphisms'}},
+                    {id: 'ch4', title: {zh: '第4章：群表示', en: 'Ch.4: Group Representations'}}
+                ]
+            },
+            'math-physics': {
+                title: {zh: '数学物理方法', en: 'Mathematical Physics Methods'},
+                chapters: [
+                    {id: 'mp1', title: {zh: '第1章：复变函数', en: 'Ch.1: Complex Analysis'}},
+                    {id: 'mp2', title: {zh: '第2章：偏微分方程', en: 'Ch.2: Partial Differential Equations'}},
+                    {id: 'mp3', title: {zh: '第3章：特殊函数', en: 'Ch.3: Special Functions'}},
+                    {id: 'mp4', title: {zh: '第4章：积分变换', en: 'Ch.4: Integral Transforms'}}
+                ]
+            },
+            'quantum': {
+                title: {zh: '量子力学', en: 'Quantum Mechanics'},
+                chapters: [
+                    {id: 'qm1', title: {zh: '第1章：波函数', en: 'Ch.1: Wave Functions'}},
+                    {id: 'qm2', title: {zh: '第2章：薛定谔方程', en: 'Ch.2: Schrödinger Equation'}},
+                    {id: 'qm3', title: {zh: '第3章：算符理论', en: 'Ch.3: Operator Theory'}},
+                    {id: 'qm4', title: {zh: '第4章：微扰理论', en: 'Ch.4: Perturbation Theory'}}
+                ]
+            }
+        };
+
+        // Update navigation based on selected book
+        function updateNavigation(bookKey) {
+            const book = booksContent[bookKey];
+            const lang = document.body.classList.contains('lang-zh') ? 'zh' : 'en';
+            const navList = document.querySelector('.nav-list');
             
-            // Navigation links
+            // Update title
+            document.querySelector('.content-title .zh-only').textContent = book.title.zh;
+            document.querySelector('.content-title .en-only').textContent = book.title.en;
+            
+            // Update chapters
+            navList.innerHTML = book.chapters.map(ch => `
+                <li class="nav-item">
+                    <a href="#${ch.id}" class="nav-link">
+                        <span class="zh-only">${ch.title.zh}</span>
+                        <span class="en-only">${ch.title.en}</span>
+                    </a>
+                </li>
+            `).join('');
+            
+            // Re-attach event listeners
+            attachNavListeners();
+        }
+
+        // Attach navigation listeners
+        function attachNavListeners() {
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     navLinks.forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
+                    
+                    // Show message for demo
+                    const chapterId = this.getAttribute('href').substring(1);
+                    showChapterContent(chapterId);
+                });
+            });
+        }
+
+        // Show chapter content (demo)
+        function showChapterContent(chapterId) {
+            const contentArea = document.querySelector('.content');
+            const noteSection = contentArea.querySelector('h2').parentElement;
+            
+            // Add a message showing which chapter was clicked
+            const message = document.createElement('div');
+            message.className = 'note-entry';
+            message.style.background = '#f0f9ff';
+            message.style.borderColor = '#3b82f6';
+            message.innerHTML = `
+                <p style="color: #3b82f6;">
+                    <span class="zh-only">你点击了章节: ${chapterId}。这里将显示该章节的具体内容。</span>
+                    <span class="en-only">You clicked chapter: ${chapterId}. Chapter content will be displayed here.</span>
+                </p>
+            `;
+            
+            noteSection.insertBefore(message, noteSection.firstChild);
+            setTimeout(() => message.remove(), 3000);
+        }
+
+        // Load saved language preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('language') || 'zh';
+            document.body.className = 'lang-' + savedLang;
+            
+            // Initialize search
+            initSearch();
+            
+            // Book selector functionality
+            const bookItems = document.querySelectorAll('.book-item');
+            bookItems.forEach((item, index) => {
+                item.addEventListener('click', function() {
+                    bookItems.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update content based on selected book
+                    const bookKeys = ['group-theory', 'math-physics', 'quantum'];
+                    updateNavigation(bookKeys[index]);
+                });
+            });
+            
+            // Initial navigation setup
+            attachNavListeners();
+            
+            // Header navigation
+            document.querySelectorAll('.header-nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert(document.body.classList.contains('lang-zh') ? 
+                          `"${this.textContent.trim()}" 功能正在开发中...` : 
+                          `"${this.textContent.trim()}" feature coming soon...`);
                 });
             });
         });
