@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理学习笔记 | Physics Study Notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #5b21b6;
+            --secondary-color: #8b5cf6;
+            --accent-color: #a78bfa;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-color);
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo svg {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .lang-switcher {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .lang-switcher:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Main Layout */
+        .main-container {
+            max-width: 1400px;
+            margin: 5rem auto 2rem;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 5rem;
+            height: fit-content;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+        
+        .sidebar-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        
+        .book-selector {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .book-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .book-item:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .book-item.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .book-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 0.3rem;
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 0.5rem 0.8rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: var(--bg-color);
+            color: var(--secondary-color);
+        }
+        
+        .nav-link.active {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        /* Content Area */
+        .content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .content-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .content-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .content-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        /* Study Cards Grid */
+        .study-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .study-card {
+            background: var(--bg-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .study-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--accent-color);
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .card-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        /* Notes Section */
+        .note-entry {
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .note-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .note-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .tag {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .note-content {
+            line-height: 1.8;
+        }
+        
+        .math-block {
+            background: #f3f4f6;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        /* Progress Dashboard */
+        .progress-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-card {
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+        }
+        
+        .progress-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-label {
+            opacity: 0.9;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+            
+            .header-nav {
+                gap: 1rem;
+            }
+        }
+        
+        /* Language Toggle Animation */
+        .lang-en .zh-only {
+            display: none;
+        }
+        
+        .lang-zh .en-only {
+            display: none;
+        }
+        
+        /* Illustrations */
+        .illustration {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        
+        .illustration svg {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body class="lang-zh">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span class="zh-only">物理学习笔记</span>
+                <span class="en-only">Physics Study Notes</span>
+            </div>
+            <nav class="header-nav">
+                <a href="#dashboard" style="color: white; text-decoration: none;">
+                    <span class="zh-only">仪表盘</span>
+                    <span class="en-only">Dashboard</span>
+                </a>
+                <a href="#notes" style="color: white; text-decoration: none;">
+                    <span class="zh-only">笔记</span>
+                    <span class="en-only">Notes</span>
+                </a>
+                <a href="#resources" style="color: white; text-decoration: none;">
+                    <span class="zh-only">资源</span>
+                    <span class="en-only">Resources</span>
+                </a>
+                <button class="lang-switcher" onclick="toggleLanguage()">
+                    <span class="zh-only">EN</span>
+                    <span class="en-only">中文</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <span class="zh-only">选择书籍</span>
+                    <span class="en-only">Select Book</span>
+                </h3>
+                <div class="book-selector">
+                    <div class="book-item active">
+                        <span class="book-icon">📘</span>
+                        <span class="zh-only">群论基础</span>
+                        <span class="en-only">Group Theory Basics</span>
+                    </div>
+                    <div class="book-item">
+                        <span class="book-icon">📗</span>
+                        <span class="zh-only">数学物理方法</span>
+                        <span class="en-only">Mathematical Physics</span>
+                    </div>
+                    <div class="book-item">
+                        <span class="book-icon">📙</span>
+                        <span class="zh-only">量子力学</span>
+                        <span class="en-only">Quantum Mechanics</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <span class="zh-only">章节导航</span>
+                    <span class="en-only">Chapter Navigation</span>
+                </h3>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#ch1" class="nav-link active">
+                            <span class="zh-only">第1章：群的定义</span>
+                            <span class="en-only">Ch.1: Group Definition</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#ch2" class="nav-link">
+                            <span class="zh-only">第2章：子群与陪集</span>
+                            <span class="en-only">Ch.2: Subgroups & Cosets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#ch3" class="nav-link">
+                            <span class="zh-only">第3章：群同态</span>
+                            <span class="en-only">Ch.3: Group Homomorphisms</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#ch4" class="nav-link">
+                            <span class="zh-only">第4章：群表示</span>
+                            <span class="en-only">Ch.4: Group Representations</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <div class="content-header">
+                <h1 class="content-title">
+                    <span class="zh-only">群论学习笔记</span>
+                    <span class="en-only">Group Theory Study Notes</span>
+                </h1>
+                <p class="content-subtitle">
+                    <span class="zh-only">探索对称性的数学语言</span>
+                    <span class="en-only">Exploring the Mathematical Language of Symmetry</span>
+                </p>
+            </div>
+
+            <!-- Progress Dashboard -->
+            <div class="progress-dashboard">
+                <div class="progress-card">
+                    <div class="progress-value">Day 9/30</div>
+                    <div class="progress-label">
+                        <span class="zh-only">学习进度</span>
+                        <span class="en-only">Study Progress</span>
+                    </div>
+                </div>
+                <div class="progress-card" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
+                    <div class="progress-value">24</div>
+                    <div class="progress-label">
+                        <span class="zh-only">笔记数量</span>
+                        <span class="en-only">Notes Written</span>
+                    </div>
+                </div>
+                <div class="progress-card" style="background: linear-gradient(135deg, #10b981, #34d399);">
+                    <div class="progress-value">85%</div>
+                    <div class="progress-label">
+                        <span class="zh-only">章节完成度</span>
+                        <span class="en-only">Chapter Completion</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Topics Grid -->
+            <h2 style="margin-bottom: 1.5rem;">
+                <span class="zh-only">今日学习主题</span>
+                <span class="en-only">Today's Study Topics</span>
+            </h2>
+            <div class="study-grid">
+                <div class="study-card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">
+                        <span class="zh-only">循环群</span>
+                        <span class="en-only">Cyclic Groups</span>
+                    </h3>
+                    <p class="card-description">
+                        <span class="zh-only">由单个元素生成的群，所有元素都是生成元的幂</span>
+                        <span class="en-only">Groups generated by a single element, where all elements are powers of the generator</span>
+                    </p>
+                </div>
+                
+                <div class="study-card">
+                    <div class="card-icon" style="background: #f59e0b;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">
+                        <span class="zh-only">置换群</span>
+                        <span class="en-only">Permutation Groups</span>
+                    </h3>
+                    <p class="card-description">
+                        <span class="zh-only">有限集合上所有双射构成的群，对称群的具体实现</span>
+                        <span class="en-only">Groups of all bijections on a finite set, concrete realization of symmetric groups</span>
+                    </p>
+                </div>
+                
+                <div class="study-card">
+                    <div class="card-icon" style="background: #10b981;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">
+                        <span class="zh-only">拉格朗日定理</span>
+                        <span class="en-only">Lagrange's Theorem</span>
+                    </h3>
+                    <p class="card-description">
+                        <span class="zh-only">子群的阶整除群的阶，群论中的基本定理</span>
+                        <span class="en-only">The order of a subgroup divides the order of the group, fundamental theorem in group theory</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Simple Illustration -->
+            <div class="illustration">
+                <svg viewBox="0 0 400 300" style="background: #f9fafb; border-radius: 8px;">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#8b5cf6"/>
+                        </marker>
+                    </defs>
+                    <!-- 循环群示意图 -->
+                    <circle cx="200" cy="150" r="80" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+                    <circle cx="200" cy="70" r="6" fill="#5b21b6"/>
+                    <circle cx="280" cy="150" r="6" fill="#5b21b6"/>
+                    <circle cx="200" cy="230" r="6" fill="#5b21b6"/>
+                    <circle cx="120" cy="150" r="6" fill="#5b21b6"/>
+                    <path d="M 200 76 Q 240 110 274 150" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <path d="M 274 150 Q 240 190 200 224" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <path d="M 200 224 Q 160 190 126 150" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <path d="M 126 150 Q 160 110 200 76" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <text x="200" y="50" text-anchor="middle" fill="#5b21b6" font-size="14">e</text>
+                    <text x="300" y="155" text-anchor="middle" fill="#5b21b6" font-size="14">a</text>
+                    <text x="200" y="255" text-anchor="middle" fill="#5b21b6" font-size="14">a²</text>
+                    <text x="100" y="155" text-anchor="middle" fill="#5b21b6" font-size="14">a³</text>
+                    <text x="200" y="295" text-anchor="middle" fill="#6b7280" font-size="12">
+                        <tspan class="zh-only">循环群 C₄</tspan>
+                        <tspan class="en-only">Cyclic Group C₄</tspan>
+                    </text>
+                </svg>
+            </div>
+
+            <!-- Recent Notes -->
+            <h2 style="margin-bottom: 1.5rem;">
+                <span class="zh-only">最新笔记</span>
+                <span class="en-only">Recent Notes</span>
+            </h2>
+            
+            <div class="note-entry">
+                <div class="note-header">
+                    <div>
+                        <h3 style="margin-bottom: 0.5rem;">
+                            <span class="zh-only">循环群的性质与分类</span>
+                            <span class="en-only">Properties and Classification of Cyclic Groups</span>
+                        </h3>
+                        <span class="note-date">2025-01-05</span>
+                    </div>
+                    <div class="note-tags">
+                        <span class="tag">
+                            <span class="zh-only">群论</span>
+                            <span class="en-only">Group Theory</span>
+                        </span>
+                        <span class="tag">
+                            <span class="zh-only">基础</span>
+                            <span class="en-only">Basics</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="note-content">
+                    <p class="zh-only">
+                        今天深入学习了循环群的概念。循环群是最简单但又极其重要的一类群。
+                        一个群G称为循环群，如果存在元素a∈G使得G = ⟨a⟩ = {aⁿ | n ∈ ℤ}。
+                    </p>
+                    <p class="en-only">
+                        Today I delved into the concept of cyclic groups. Cyclic groups are the simplest yet extremely important class of groups.
+                        A group G is called cyclic if there exists an element a∈G such that G = ⟨a⟩ = {aⁿ | n ∈ ℤ}.
+                    </p>
+                    <div class="math-block">
+                        <span class="zh-only">定理：所有循环群都是阿贝尔群</span>
+                        <span class="en-only">Theorem: All cyclic groups are abelian</span><br>
+                        <span class="zh-only">证明：</span>
+                        <span class="en-only">Proof:</span> aᵐ · aⁿ = aᵐ⁺ⁿ = aⁿ⁺ᵐ = aⁿ · aᵐ
+                    </div>
+                    <p class="zh-only">
+                        重要性质：有限循环群Cₙ与整数模n加法群ℤ/nℤ同构。
+                        无限循环群与整数加法群ℤ同构。
+                    </p>
+                    <p class="en-only">
+                        Important property: Finite cyclic group Cₙ is isomorphic to the additive group of integers modulo n, ℤ/nℤ.
+                        Infinite cyclic groups are isomorphic to the additive group of integers ℤ.
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Language Toggle
+        function toggleLanguage() {
+            const body = document.body;
+            if (body.classList.contains('lang-zh')) {
+                body.classList.remove('lang-zh');
+                body.classList.add('lang-en');
+                localStorage.setItem('language', 'en');
+            } else {
+                body.classList.remove('lang-en');
+                body.classList.add('lang-zh');
+                localStorage.setItem('language', 'zh');
+            }
+        }
+
+        // Load saved language preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('language') || 'zh';
+            document.body.className = 'lang-' + savedLang;
+            
+            // Book selector functionality
+            const bookItems = document.querySelectorAll('.book-item');
+            bookItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    bookItems.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Navigation links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
